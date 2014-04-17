@@ -196,7 +196,7 @@ class BaseBackend():
             # update-composition
             target_action = self.last_nth_action(3)
 
-            self.commit_composition(
+            self.update_composition(
                 target_action["editing-string"])
 
             self.auto_corrector.increase_ticket(
@@ -222,13 +222,13 @@ class BaseBackend():
         raw_string = self.last_action()["raw-string"]
 
         if editing_string == "":
-            return BackspaceType.HARD
+            return False
 
         # Backspace is also the hotkey to undo the last action where
         # applicable.
         has_undone = self.undo_last_action()
         if has_undone:
-            return BackspaceType.UNDO
+            return True
 
         deleted_char = editing_string[-1]
         editing_string = editing_string[:-1]
@@ -238,12 +238,16 @@ class BaseBackend():
             raw_string[:index] + \
             raw_string[(index + 1):]
 
+        self.update_composition(
+            string=editing_string, raw_string=raw_string)
+
         self.history.append({
             "type": "backspace",
             "raw-string": raw_string,
             "editing-string": editing_string
         })
-        return BackspaceType.SOFT
+
+        return True
 
     def on_space_pressed(self):
         # Wrap the string inside a list so that can_expand() can

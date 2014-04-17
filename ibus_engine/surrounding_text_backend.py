@@ -26,7 +26,7 @@ from itertools import takewhile
 from gi.repository import IBus
 
 import vncharsets
-from base_backend import BaseBackend, BackspaceType
+from base_backend import BaseBackend
 
 vncharsets.init()
 logger = logging.getLogger(__name__)
@@ -127,13 +127,7 @@ class SurroundingTextBackend(BaseBackend):
             return False
 
         if keyval == IBus.BackSpace:
-            backspace_type = self.on_backspace_pressed()
-
-            if backspace_type == BackspaceType.UNDO:
-                self.reset()
-                return True
-            else:
-                return False
+            return self.on_backspace_pressed()
 
         if keyval == IBus.space:
             self.on_space_pressed()
