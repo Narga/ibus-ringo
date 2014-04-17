@@ -1,4 +1,4 @@
-from nose.tools import eq_
+#from nose.tools import eq_
 from ibus_engine.base_backend import BaseBackend
 from ibus_engine.abbr import AbbreviationExpander
 
@@ -49,47 +49,6 @@ class TestEngine():
     def send_space(self, engine):
         engine.on_space_pressed()
         return self
-
-    def test_1_bug_117(self):
-        """
-        baa + bksp => {new_string: b, raw_string: b}
-        """
-
-        self.send_keys("baa", self.eng).send_bksp(self.eng)
-
-        eq_(self.eng.last_action()["editing-string"], 'b')
-        eq_(self.eng.last_action()["raw-string"], 'b')
-
-    def test_2_bug_117(self):
-        """
-        bana + bksp => {new_string: bâ, raw_string: baa}
-        """
-
-        self.send_keys("bana", self.eng).send_bksp(self.eng)
-
-        eq_(self.eng.last_action()["editing-string"], 'bâ')
-        eq_(self.eng.last_action()["raw-string"], 'baa')
-
-    def test_3_bug_117(self):
-        """
-        ba + bksp + a => {new_string: ba, raw_string: ba}
-        """
-
-        self.send_keys("ba", self.eng) \
-            .send_bksp(self.eng).send_keys("a", self.eng)
-
-        eq_(self.eng.last_action()["editing-string"], 'ba')
-        eq_(self.eng.last_action()["raw-string"], 'ba')
-
-    def test_4_bug_117(self):
-        """
-        thuow + bksp => {new_string: thu, raw_string: thu}
-        """
-
-        self.send_keys("thuow", self.eng).send_bksp(self.eng)
-
-        eq_(self.eng.last_action()["editing-string"], 'thu')
-        eq_(self.eng.last_action()["raw-string"], 'thu')
 
     def test_bug_123(self):
         """
