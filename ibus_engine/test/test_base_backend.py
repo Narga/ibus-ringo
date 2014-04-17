@@ -117,40 +117,42 @@ class TestBaseBackend():
         eq_(last_action["editing-string"], corrected + ' ')
 
     def test_backspace_undo_correction(self):
-        """
-        Pressing backspace immediately after a correction should
-        undo it.
-        """
-        # First the original, non-Vietnamese is shown
-        self.backend.history.append({
-            "type": "update-composition",
-            "raw-string": "casl",
-            "editing-string": "casl"
-        })
+        self.backend.update_composition("ab", "ab")
+        self.auto_corrector.suggest = Mock(return_value="aoe")
+        self.config["enable-text-expansion"] = False
+        self.config["skip-non-vietnamese"] = True
 
-        # Then it got corrected, says to "cá "
-        self.backend.history.append({
-            "type": "update-composition",
-            "raw-string": "casltheotunheou",
-            "editing-string": "cá "
-        })
+        self.backend.on_space_pressed()
+        eq_(self.backend.last_action()["editing-string"], "aoe ")
 
-        self.backend.history.append({
-            "type": "string-correction",
-            "raw-string": "casltheotunheou",  # gibberish
-            "editing-string": "cá "
-        })
+        swallow = self.backend.on_backspace_pressed()
+        eq_(self.backend.last_action()["editing-string"], "ab")
+        eq_(swallow, True)
 
-        self.backend.commit_composition = Mock()
+        swallow = self.backend.on_backspace_pressed()
+        eq_(swallow, True)
+        eq_(self.backend.last_action()["editing-string"], "a")
 
-        # Then we press backspace
-        self.backend.on_backspace_pressed()
+        swallow = self.backend.on_backspace_pressed()
+        eq_(swallow, True)
+        eq_(self.backend.last_action()["editing-string"], "")
+
+        swallow = self.backend.on_backspace_pressed()
+        eq_(swallow, False)
+
+    def test_undo_update_composition(self):
+        self.backend.update_composition("câ", "caa")
+        self.backend.update_composition("cấ", "caas")
+
+        self.backend.undo_last_action()
 
         last_action = self.backend.last_action()
-        eq_(last_action["type"], "undo")
-        eq_(last_action["editing-string"], "casl")
-
-        self.backend.commit_composition.assert_called_once_with("casl")
+        expected = {
+            "type": "undo",
+            "raw-string": "caa",
+            "editing-string": "câ"
+        }
+        eq_(last_action, expected)
 
     def test_non_vietnamese(self):
         """

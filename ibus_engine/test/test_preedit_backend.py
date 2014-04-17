@@ -1,6 +1,7 @@
 from nose.tools import eq_
 from gi.repository import IBus
 from ibus_engine.preedit_backend import PreeditBackend
+from ibus_engine.base_backend import BackspaceType
 
 try:
     from unittest.mock import Mock
@@ -66,7 +67,7 @@ class TestPreeditBackend():
     def test_backspace_preedit(self):
         """
         If there is a preedit showing then it should update the preedit
-        with one less character, else it should yield a hard backspace.
+        with an undo, else it should yield a hard backspace.
         """
         self.backend.update_composition = Mock()
         self.backend.reset = Mock()
@@ -77,7 +78,25 @@ class TestPreeditBackend():
             "raw-string": "a"
         })
 
+        self.backend.history.append({
+            "type": "update-composition",
+            "editing-string": "á",
+            "raw-string": "as"
+        })
+
         result = self.backend.on_special_key_pressed(IBus.BackSpace)
 
         eq_(result, True)
-        self.backend.update_composition.assert_called_once_with("")
+        self.backend.update_composition.assert_called_once_with(
+            string="a", raw_string="a")
+
+        self.backend.update_composition.reset_mock()
+        result = self.backend.on_special_key_pressed(IBus.BackSpace)
+        eq_(result, True)
+        self.backend.update_composition.assert_called_once_with(
+            string='', raw_string='')
+
+        self.backend.update_composition.reset_mock()
+        result = self.backend.on_special_key_pressed(IBus.BackSpace)
+        eq_(result, False)
+        eq_(self.backend.update_composition.called, False)

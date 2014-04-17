@@ -1,7 +1,6 @@
 from nose.tools import eq_
 from gi.repository import IBus
 from ibus_engine.surrounding_text_backend import SurroundingTextBackend
-from ibus_engine.base_backend import BackspaceType
 
 try:
     from unittest.mock import Mock
@@ -82,7 +81,7 @@ class TestSurroundingTextBackend():
         """
         on_special_key_pressed() should not swallow a normal backspace.
         """
-        self.backend.on_backspace_pressed = Mock()
+        self.backend.on_backspace_pressed = Mock(return_value=False)
 
         result = self.backend.on_special_key_pressed(IBus.BackSpace)
 
@@ -95,7 +94,7 @@ class TestSurroundingTextBackend():
         it is an undo.
         """
         self.backend.on_backspace_pressed = Mock(
-            return_value=BackspaceType.UNDO)
+            return_value=True)
         self.backend.reset = Mock()
 
         result = self.backend.on_special_key_pressed(IBus.BackSpace)
