@@ -1,7 +1,6 @@
 from nose.tools import eq_
 from gi.repository import IBus
 from ibus_engine.preedit_backend import PreeditBackend
-from ibus_engine.base_backend import BackspaceType
 
 try:
     from unittest.mock import Mock

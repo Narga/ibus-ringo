@@ -29,12 +29,6 @@ import bogo
 logger = logging.getLogger(__name__)
 
 
-class BackspaceType:
-    HARD = 0
-    SOFT = 1
-    UNDO = 2
-
-
 class BaseBackend():
 
     def __init__(self, config, abbr_expander,
