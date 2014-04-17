@@ -166,7 +166,26 @@ class BaseBackend():
              keyval in im_keys)
 
     def undo_last_action(self):
+        """
+        Return boolean - whether we have undone.
+        """
         last_action = self.last_action()
+
+        if last_action["type"] == "update-composition":
+            logging.debug("Undoing update_composition()")
+            # Replay the desired state
+            desired_state = self.last_nth_action(2)
+
+            self.update_composition(
+                string=desired_state["editing-string"],
+                raw_string=desired_state["raw-string"])
+
+            self.history.append({
+                "type": "undo",
+                "raw-string": desired_state["raw-string"],
+                "editing-string": desired_state["editing-string"]
+            })
+            return True
 
         # If the last commited string is a spellchecker suggestion
         # then this backspace is to undo that.
