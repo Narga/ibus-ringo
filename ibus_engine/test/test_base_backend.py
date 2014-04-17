@@ -118,7 +118,7 @@ class TestBaseBackend():
 
     def test_backspace_undo_correction(self):
         self.backend.update_composition("ab", "ab")
-        self.auto_corrector.suggest = Mock(return_value="aoe")
+        self.corrector.suggest = Mock(return_value="aoe")
         self.config["enable-text-expansion"] = False
         self.config["skip-non-vietnamese"] = True
 
