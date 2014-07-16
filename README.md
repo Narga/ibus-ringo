@@ -5,6 +5,8 @@
 
 [*English below...*](#introduction)
 
+**Thông báo: ibus-ringo đã ngừng phát triển và được merge trở lại ibus-bogo**
+
 **ibus-bogo** là một chương trình xử lý gõ tiếng Việt sử dụng engine **BoGo**
 và được thiết kế để chạy cùng [iBus](http://code.google.com/p/ibus/),
 một phần mềm quản lý các bộ gõ trong GNU/Linux.
