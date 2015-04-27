@@ -18,7 +18,7 @@ DISTRO=${ID_LIKE:-$ID}
 # Archlinux and Debian unstable don't have VERSION_ID
 DISTRO_VERSION=${VERSION_ID:-''}
 BASE=~/.local/share/ibus-bogo
-REPO=https://github.com/lewtds/ibus-ringo
+REPO=https://github.com/narga/ibus-ringo
 
 LICENSE='Xin chào, đây là bộ cài đặt ibus-ringo, một phần mềm tự do nguồn mở.
 Để sử dụng, bạn cần đồng ý với những điều khoản sau.
@@ -80,7 +80,6 @@ install_arch () {
 	fi
 
 	print_info "# Cài đặt phần mềm phụ thuộc..."
-	sudo pacman -S $DEPS --noconfirm || exit 1
 	install_bogo
 }
 
